@@ -8,6 +8,9 @@ $(function () {
   const api_url = 'https://www.googleapis.com/youtube/v3/search';
   const api_key = 'AIzaSyAbVFIp6nJHyoHZm_ZI3fQzq9ztabFDTG4';
 
+  // init fancybox
+  $('.fancybox').fancybox();
+
   // Searchbar Handler
   // Focus Event Handler
   $searchField.on('focus', function () {
@@ -19,7 +22,7 @@ $(function () {
     );
     $icon.animate(
       {
-        left: '95%',
+        left: '93%',
       },
       400
     );
@@ -36,7 +39,7 @@ $(function () {
       );
       $icon.animate(
         {
-          left: '40%',
+          left: '38%',
         },
         400
       );
