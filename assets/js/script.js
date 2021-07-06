@@ -196,7 +196,7 @@ $(function () {
       '">' +
       '</div>' +
       '<div class="list-right">' +
-      '<h3><a class="fancybox fancybox.iframe" href="http://www.youtube.com/embed/' +
+      '<h3><a class="fancybox fancybox.iframe" href="https://www.youtube.com/embed/' +
       videoId +
       '">' +
       title +
