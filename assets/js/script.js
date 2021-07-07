@@ -5,6 +5,8 @@ $(function () {
   const $searchForm = $('#search-form');
   const $searchField = $('#query');
   const $searchWrapper = $('#search-wrap');
+  const $results = $('#results');
+  const $buttons = $('#buttons');
   const api_url = 'https://www.googleapis.com/youtube/v3/search';
   const api_key = 'AIzaSyAbVFIp6nJHyoHZm_ZI3fQzq9ztabFDTG4';
 
@@ -16,7 +18,7 @@ $(function () {
   $searchField.on('focus', function () {
     $searchWrapper.animate(
       {
-        width: '100%',
+        width: $searchForm.width(),
       },
       400
     );
@@ -39,13 +41,31 @@ $(function () {
     search();
   });
 
-  function search() {
-    // Clear Results
-    $('#results').html('');
-    $('#buttons').html('');
+  const dataHandler = (data) => {
+    const nextPageToken = data.nextPageToken;
+    const prevPageToken = data.prevPageToken;
+
+    // console.log(data);
+    $.each(data.items, function (i, item) {
+      // Get Output
+      const output = getOutput(item);
+      $results.append(output);
+    });
+
+    const buttons = getButtons(prevPageToken, nextPageToken);
+    $buttons.append(buttons);
+  }
+
+  const clearResults = () => {
+    $results.html('');
+    $buttons.html('');
+  }
+
+  const search = () => {
+    clearResults();
 
     // Get Form Input
-    q = $('#query').val();
+    q = $searchField.val();
 
     // Run GET Request on API
     $.get(
@@ -56,39 +76,16 @@ $(function () {
         type: 'video',
         key: api_key,
       },
-      function (data) {
-        var nextPageToken = data.nextPageToken;
-        var prevPageToken = data.prevPageToken;
-
-        // console.log(data);
-
-        $.each(data.items, function (i, item) {
-          // Get Output
-          var output = getOutput(item);
-
-          // Display Results
-          $('#results').append(output);
-        });
-
-        var buttons = getButtons(prevPageToken, nextPageToken);
-
-        // Display Buttons
-        $('#buttons').append(buttons);
-      }
+      dataHandler
     );
   }
 
   // Next Page Function
   nextPage = function () {
-    var token = $('#next-button').data('token');
-    var q = $('#next-button').data('query');
+    const token = $('#next-button').data('token');
+    const q = $('#next-button').data('query');
 
-    // Clear Results
-    $('#results').html('');
-    $('#buttons').html('');
-
-    // Get Form Input
-    q = $('#query').val();
+    clearResults();
 
     // Run GET Request on API
     $.get(
@@ -100,39 +97,16 @@ $(function () {
         type: 'video',
         key: api_key,
       },
-      function (data) {
-        var nextPageToken = data.nextPageToken;
-        var prevPageToken = data.prevPageToken;
-
-        // console.log(data);
-
-        $.each(data.items, function (i, item) {
-          // Get Output
-          var output = getOutput(item);
-
-          // Display Results
-          $('#results').append(output);
-        });
-
-        var buttons = getButtons(prevPageToken, nextPageToken);
-
-        // Display Buttons
-        $('#buttons').append(buttons);
-      }
+      dataHandler
     );
   };
 
   // Prev Page Function
   prevPage = function () {
-    var token = $('#prev-button').data('token');
-    var q = $('#prev-button').data('query');
+    const token = $('#prev-button').data('token');
+    const q = $('#prev-button').data('query');
 
-    // Clear Results
-    $('#results').html('');
-    $('#buttons').html('');
-
-    // Get Form Input
-    q = $('#query').val();
+    clearResults();
 
     // Run GET Request on API
     $.get(
@@ -144,72 +118,43 @@ $(function () {
         type: 'video',
         key: api_key,
       },
-      function (data) {
-        var nextPageToken = data.nextPageToken;
-        var prevPageToken = data.prevPageToken;
-
-        // console.log(data);
-
-        $.each(data.items, function (i, item) {
-          // Get Output
-          var output = getOutput(item);
-
-          // Display Results
-          $('#results').append(output);
-        });
-
-        var buttons = getButtons(prevPageToken, nextPageToken);
-
-        // Display Buttons
-        $('#buttons').append(buttons);
-      }
+      dataHandler
     );
   };
 
   // Build Output
   function getOutput(item) {
-    var videoId = item.id.videoId;
-    var title = item.snippet.title;
-    var description = item.snippet.description;
-    var thumb = item.snippet.thumbnails.high.url;
-    var channelTitle = item.snippet.channelTitle;
-    var videoDate = getDate(item.snippet.publishedAt);
+    const videoId = item.id.videoId;
+    const title = item.snippet.title;
+    const description = item.snippet.description;
+    const thumb = item.snippet.thumbnails.high.url;
+    const channelTitle = item.snippet.channelTitle;
+    const videoDate = getDate(item.snippet.publishedAt);
 
     // Build Output String
-    var output =
-      '<li>' +
-      '<div class="list-left">' +
-      '<img src="' +
-      thumb +
-      '">' +
-      '</div>' +
-      '<div class="list-right">' +
-      '<h3><a class="fancybox fancybox.iframe" href="https://www.youtube.com/embed/' +
-      videoId +
-      '">' +
-      title +
-      '</a></h3>' +
-      '<p class="subtitle">By <span class="cTitle">' +
-      channelTitle +
-      '</span> on ' +
-      videoDate +
-      '</p>' +
-      '<p>' +
-      description +
-      '</p>' +
-      '</div>' +
-      '</li>' +
-      '<div class="clearfix"></div>' +
-      '';
+    const output = `<li>
+        <div class="list-left"><img src="${thumb}" alt="thumbnails"></div>
+        <div class="list-right">
+          <h3>
+            <a href="https://www.youtube.com/embed/${videoId}" class="fancybox fancybox.iframe">
+              ${title}
+            </a>
+          </h3>
+          <p class="subtitle">By <span class="cTitle">${channelTitle}</span>
+          on ${videoDate}</p>
+          <p>${description}</p>
+        </div>
+        <div class="clearfix"></div>
+      </li>`;
 
     return output;
   }
 
   function getDate(isoDateString) {
-    date = new Date(isoDateString);
-    year = date.getFullYear();
-    month = date.getMonth() + 1;
-    dt = date.getDate();
+    const date = new Date(isoDateString);
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let dt = date.getDate();
 
     if (dt < 10) {
       dt = '0' + dt;
@@ -218,37 +163,32 @@ $(function () {
       month = '0' + month;
     }
 
-    return year + '-' + month + '-' + dt;
+    return `${year}-${month}-${dt}`;
   }
 
   // Build the buttons
   function getButtons(prevPageToken, nextPageToken) {
-    if (!prevPageToken) {
-      var btnoutput =
-        '<div class="button-container">' +
-        '<button id="next-button" class="paging-button" data-token="' +
-        nextPageToken +
-        '" data-query="' +
-        q +
-        '"' +
-        'onclick="nextPage();">Next Page</button></div>';
-    } else {
-      var btnoutput =
-        '<div class="button-container">' +
-        '<button id="prev-button" class="paging-button" data-token="' +
-        prevPageToken +
-        '" data-query="' +
-        q +
-        '"' +
-        'onclick="prevPage();">Prev Page</button>' +
-        '<button id="next-button" class="paging-button" data-token="' +
-        nextPageToken +
-        '" data-query="' +
-        q +
-        '"' +
-        'onclick="nextPage();">Next Page</button></div>';
+    let btnOutput =
+      `<button
+          class="paging-button"
+          id="next-button"
+          data-token="${nextPageToken}"
+          data-query="${q}"
+          onclick="nextPage()"
+        >Next</button>`
+
+    if (prevPageToken) {
+      btnOutput = 
+        `<button
+            class="paging-button"
+            id="prev-button"
+            data-token="${prevPageToken}"
+            data-query="${q}"
+            onclick="prevPage()"
+          >Prev</button>
+          ${btnOutput}`;
     }
 
-    return btnoutput;
+    return btnOutput;
   }
 });

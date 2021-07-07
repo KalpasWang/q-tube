@@ -147,16 +147,16 @@ footer {
 	color: var(--red)
 }
 
-.button-container {
+.buttons {
 	margin-top: 25px;
 }
 
 .paging-button {
-	background: #f4f4f4;
+	background: var(--white);
 	padding: 8px 13px;
 	border: #ccc 1px solid;
 	border-radius: 5px;
-	color: #333;
-	margin: 10px;
+	color: var(--grey);
+	margin-right: 10px;
 	cursor: pointer;
 }
