@@ -15,15 +15,17 @@
     <main>
       <div class="container">
         <form id="search-form" class="search-form">
-          <input
-            type="search"
-            id="query"
-            class="search-field"
-            placeholder="Search YouTube..."
-          />
-          <button type="submit" class="search-btn" id="search-btn">
-            <i class="fas fa-search fa-2x"></i>
-          </button>
+          <div class="search-wrap" id="search-wrap">
+            <input
+              type="search"
+              id="query"
+              class="search-field"
+              placeholder="Search YouTube..."
+            />
+            <button type="submit" class="search-btn">
+              <i class="fas fa-search fa-2x"></i>
+            </button>
+          </div>
         </form>
 
         <ul class="results" id="results"></ul>

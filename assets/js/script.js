@@ -4,7 +4,7 @@ let prevPage = () => {};
 $(function () {
   const $searchForm = $('#search-form');
   const $searchField = $('#query');
-  const $icon = $('#search-btn');
+  const $searchWrapper = $('#search-wrap');
   const api_url = 'https://www.googleapis.com/youtube/v3/search';
   const api_key = 'AIzaSyAbVFIp6nJHyoHZm_ZI3fQzq9ztabFDTG4';
 
@@ -14,15 +14,9 @@ $(function () {
   // Searchbar Handler
   // Focus Event Handler
   $searchField.on('focus', function () {
-    $(this).animate(
+    $searchWrapper.animate(
       {
         width: '100%',
-      },
-      400
-    );
-    $icon.animate(
-      {
-        left: '93%',
       },
       400
     );
@@ -31,15 +25,9 @@ $(function () {
   // Blur Event Handler
   $searchField.on('blur', function () {
     if ($searchField.val() == '') {
-      $(this).animate(
+      $searchWrapper.animate(
         {
-          width: '45%',
-        },
-        400
-      );
-      $icon.animate(
-        {
-          left: '38%',
+          width: '250px',
         },
         400
       );
@@ -201,11 +189,11 @@ $(function () {
       '">' +
       title +
       '</a></h3>' +
-      '<small>By <span class="cTitle">' +
+      '<p class="subtitle">By <span class="cTitle">' +
       channelTitle +
       '</span> on ' +
       videoDate +
-      '</small>' +
+      '</p>' +
       '<p>' +
       description +
       '</p>' +
