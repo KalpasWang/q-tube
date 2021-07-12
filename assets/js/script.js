@@ -7,6 +7,8 @@ $(function () {
   const $searchWrapper = $('#search-wrap');
   const $results = $('#results');
   const $buttons = $('#buttons');
+  const $loading = $('.loading');
+  const $monster = $('.monster');
   const api_url = 'https://www.googleapis.com/youtube/v3/search';
   const api_key = 'AIzaSyAbVFIp6nJHyoHZm_ZI3fQzq9ztabFDTG4';
 
@@ -54,15 +56,24 @@ $(function () {
 
     const buttons = getButtons(prevPageToken, nextPageToken);
     $buttons.append(buttons);
-  }
+    $loading.addClass('complete');
+    setTimeout(() => {
+      $monster.addClass('disappers');
+    }, 50);
+    setTimeout(() => {
+      $loading.removeClass('complete show');
+      $monster.removeClass('disappers');
+    }, 550);
+  };
 
-  const clearResults = () => {
+  const init = () => {
     $results.html('');
     $buttons.html('');
-  }
+    $loading.addClass('show');
+  };
 
   const search = () => {
-    clearResults();
+    init();
 
     // Get Form Input
     q = $searchField.val();
@@ -78,14 +89,14 @@ $(function () {
       },
       dataHandler
     );
-  }
+  };
 
   // Next Page Function
   nextPage = function () {
     const token = $('#next-button').data('token');
     const q = $('#next-button').data('query');
 
-    clearResults();
+    init();
 
     // Run GET Request on API
     $.get(
@@ -106,7 +117,7 @@ $(function () {
     const token = $('#prev-button').data('token');
     const q = $('#prev-button').data('query');
 
-    clearResults();
+    init();
 
     // Run GET Request on API
     $.get(
@@ -168,18 +179,16 @@ $(function () {
 
   // Build the buttons
   function getButtons(prevPageToken, nextPageToken) {
-    let btnOutput =
-      `<button
+    let btnOutput = `<button
           class="paging-button"
           id="next-button"
           data-token="${nextPageToken}"
           data-query="${q}"
           onclick="nextPage()"
-        >Next</button>`
+        >Next</button>`;
 
     if (prevPageToken) {
-      btnOutput = 
-        `<button
+      btnOutput = `<button
             class="paging-button"
             id="prev-button"
             data-token="${prevPageToken}"
