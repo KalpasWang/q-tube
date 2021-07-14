@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Q-Tube</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
@@ -17,15 +17,18 @@
     <main>
       <div class="container">
         <form id="search-form" class="search-form">
+          <button class="search-trigger" id="search-trigger">
+            <img src="assets/img/search.svg" alt="search" />
+          </button>
           <div class="search-wrap" id="search-wrap">
             <input
               type="search"
               id="query"
               class="search-field"
-              placeholder="Search YouTube..."
+              placeholder="Search"
             />
-            <button type="submit" class="search-btn">
-              <i class="fas fa-search fa-2x"></i>
+            <button type="submit" class="search-btn" id="search-btn">
+              <img src="assets/img/search.svg" alt="search" />
             </button>
           </div>
         </form>

@@ -1,5 +1,3 @@
-@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css);
-
 :root {
   --orange: #E55A54;
   --blue: #0C4475;
@@ -33,10 +31,6 @@ a {
   padding-right: 15px;
   max-width: 100%;
 	margin: auto;
-}
-
-.clearfix {
-	clear: both;
 }
 
 header {
@@ -84,6 +78,18 @@ footer {
   max-width: 100%;
 }
 
+.search-trigger {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--white);
+  border: var(--white);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
 .search-field {
 	width: 100%;
 	padding: 15px;
@@ -106,10 +112,10 @@ footer {
 	cursor: pointer;
 	zoom: 1;
 	opacity: 0.65;
-	background: transparent;
+  background: transparent;
 }
 
-.search-btn:hover {
+.search-btn:hover, .search-trigger:hover {
 	opacity: 0.9;
 }
 
@@ -120,6 +126,8 @@ footer {
   color: var(--grey);
 	list-style: none;
 	overflow: auto;
+  display: flex;
+  justify-content: space-between;
 }
 
 .results .subtitle {
@@ -128,23 +136,44 @@ footer {
 }
 
 .list-left {
-	float: left;
-	width: 20%;
+  width: 40%;
+  max-width: 330px;
+  padding: 0 5px;
 }
 
 .list-left img {
-	width: 100%;
-	padding: 3px;
-	border: solid #ccc 1px;
+  max-width: 100%;
 }
 
 .list-right {
-	float: right;
-	width: 78%;
+  flex: 1 1 60%;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.list-right > * {
+  word-wrap: break-word;
 }
 
 .cTitle {
 	color: var(--red)
+}
+
+@media (max-width: 768px) {
+  .results li {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .list-left {
+    width: 100%;
+    text-align: center;
+  }
+
+  .list-right {
+    width: 100%;
+  }
 }
 
 .buttons {
@@ -185,7 +214,7 @@ footer {
 }
 
 .loading.complete .monster {
-  animation: none;
+  animation: disapper 0.5s;
 }
 
 .monster {
@@ -247,10 +276,6 @@ footer {
   transform: translateX(-30%) rotate(-45deg);
 }
 
-.monster.disappers {
-  transform: rotate(360deg) scale(0.01);
-}
-
 @keyframes jump {
   0% {
     top: 0;
@@ -276,6 +301,15 @@ footer {
     top: 0;
     transform: scale(1);
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes disapper {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    transform: scale(0.01) rotate(360deg);
   }
 }
 

@@ -3,27 +3,44 @@ let prevPage = () => {};
 
 $(function () {
   const $searchForm = $('#search-form');
-  const $searchField = $('#query');
+  const $searchTrigger = $('#search-trigger');
   const $searchWrapper = $('#search-wrap');
+  const $searchField = $('#query');
+  const $searchBtn = $('#search-btn');
   const $results = $('#results');
   const $buttons = $('#buttons');
   const $loading = $('.loading');
-  const $monster = $('.monster');
   const api_url = 'https://www.googleapis.com/youtube/v3/search';
   const api_key = 'AIzaSyAbVFIp6nJHyoHZm_ZI3fQzq9ztabFDTG4';
+  const api_params = {
+    part: 'snippet',
+    type: 'video',
+    key: api_key,
+    maxResults: 10,
+  };
 
   // init fancybox
   $('.fancybox').fancybox();
 
-  // Searchbar Handler
-  // Focus Event Handler
-  $searchField.on('focus', function () {
+  // Searchbar animation
+  $searchWrapper.width(50);
+  $searchWrapper.hide();
+  $searchBtn.prop('disabled', true);
+
+  $searchTrigger.click(function (e) {
+    e.preventDefault();
+    $(this).hide();
+    $searchWrapper.show();
+    $searchBtn.prop('disabled', false);
     $searchWrapper.animate(
       {
         width: $searchForm.width(),
       },
-      400
+      250
     );
+    setTimeout(() => {
+      $searchField.focus();
+    }, 250);
   });
 
   // Blur Event Handler
@@ -31,10 +48,21 @@ $(function () {
     if ($searchField.val() == '') {
       $searchWrapper.animate(
         {
-          width: '250px',
+          width: '50px',
         },
-        400
+        250
       );
+      $searchBtn.prop('disabled', true);
+      setTimeout(() => {
+        $searchWrapper.hide();
+        $searchTrigger.show();
+      }, 250);
+    }
+  });
+
+  $searchField.keydown(function (e) {
+    if (e.key === 'Enter') {
+      $searchForm.submit();
     }
   });
 
@@ -47,7 +75,7 @@ $(function () {
     const nextPageToken = data.nextPageToken;
     const prevPageToken = data.prevPageToken;
 
-    // console.log(data);
+    console.log(data);
     $.each(data.items, function (i, item) {
       // Get Output
       const output = getOutput(item);
@@ -56,13 +84,10 @@ $(function () {
 
     const buttons = getButtons(prevPageToken, nextPageToken);
     $buttons.append(buttons);
+    // Loading Animation
     $loading.addClass('complete');
     setTimeout(() => {
-      $monster.addClass('disappers');
-    }, 50);
-    setTimeout(() => {
       $loading.removeClass('complete show');
-      $monster.removeClass('disappers');
     }, 550);
   };
 
@@ -74,39 +99,23 @@ $(function () {
 
   const search = () => {
     init();
-
     // Get Form Input
     q = $searchField.val();
-
-    // Run GET Request on API
-    $.get(
-      api_url,
-      {
-        part: 'snippet',
-        q: q,
-        type: 'video',
-        key: api_key,
-      },
-      dataHandler
-    );
+    $.get(api_url, { ...api_params, q }, dataHandler);
   };
 
   // Next Page Function
   nextPage = function () {
-    const token = $('#next-button').data('token');
+    const pageToken = $('#next-button').data('token');
     const q = $('#next-button').data('query');
 
     init();
-
-    // Run GET Request on API
     $.get(
       api_url,
       {
-        part: 'snippet',
-        q: q,
-        pageToken: token,
-        type: 'video',
-        key: api_key,
+        ...api_params,
+        q,
+        pageToken,
       },
       dataHandler
     );
@@ -114,20 +123,16 @@ $(function () {
 
   // Prev Page Function
   prevPage = function () {
-    const token = $('#prev-button').data('token');
+    const pageToken = $('#prev-button').data('token');
     const q = $('#prev-button').data('query');
 
     init();
-
-    // Run GET Request on API
     $.get(
       api_url,
       {
-        part: 'snippet',
-        q: q,
-        pageToken: token,
-        type: 'video',
-        key: api_key,
+        ...api_params,
+        q,
+        pageToken,
       },
       dataHandler
     );
@@ -138,7 +143,7 @@ $(function () {
     const videoId = item.id.videoId;
     const title = item.snippet.title;
     const description = item.snippet.description;
-    const thumb = item.snippet.thumbnails.high.url;
+    const thumb = item.snippet.thumbnails.medium.url;
     const channelTitle = item.snippet.channelTitle;
     const videoDate = getDate(item.snippet.publishedAt);
 
@@ -155,7 +160,6 @@ $(function () {
           on ${videoDate}</p>
           <p>${description}</p>
         </div>
-        <div class="clearfix"></div>
       </li>`;
 
     return output;
