@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&display=swap');
+
 :root {
   --orange: #E55A54;
   --blue: #0C4475;
@@ -14,7 +16,7 @@
 }
 
 html, body {
-	font-family: "Segoue", sans-serif;
+	font-family: 'Baloo Tamma 2', '微軟正黑體', sans-serif;
 	line-height: 1.5rem;
 	color: var(--grey);
   min-height: 100vh;
@@ -40,7 +42,7 @@ header {
 
 header h1 {
 	color: var(--blue);
-  font-size: 32px;
+  font-size: 40px;
 	margin-bottom:5px;
 }
 
@@ -128,6 +130,10 @@ footer {
 	overflow: auto;
   display: flex;
   justify-content: space-between;
+}
+
+.results h3 {
+  font-size: 22px;
 }
 
 .results .subtitle {
