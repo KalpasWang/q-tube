@@ -75,11 +75,21 @@ $(function () {
     const nextPageToken = data.nextPageToken;
     const prevPageToken = data.prevPageToken;
 
-    console.log(data);
+    // console.log(data);
     $.each(data.items, function (i, item) {
-      // Get Output
-      const output = getOutput(item);
-      $results.append(output);
+      const api_url2 = 'https://www.googleapis.com/youtube/v3/videos';
+      const options = {
+        part: 'statistics',
+        key: api_key,
+        id: item.id.videoId,
+      };
+      $.get(api_url2, options, (data) => {
+        // console.log(data);
+        const viewCount = data.items[0].statistics.viewCount || 0;
+        // Get Output
+        const output = getOutput({ ...item, viewCount });
+        $results.append(output);
+      });
     });
 
     const buttons = getButtons(prevPageToken, nextPageToken);
@@ -142,6 +152,9 @@ $(function () {
   function getOutput(item) {
     const videoId = item.id.videoId;
     const title = item.snippet.title;
+    const viewCount = item.viewCount
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     const description = item.snippet.description;
     const thumb = item.snippet.thumbnails.medium.url;
     const channelTitle = item.snippet.channelTitle;
@@ -149,15 +162,19 @@ $(function () {
 
     // Build Output String
     const output = `<li>
-        <div class="list-left"><img src="${thumb}" alt="thumbnails"></div>
+        <div class="list-left">
+          <a href="https://www.youtube.com/embed/${videoId}" class="fancybox fancybox.iframe">
+            <img src="${thumb}" alt="thumbnails">
+          </a>
+        </div>
         <div class="list-right">
           <h3>
             <a href="https://www.youtube.com/embed/${videoId}" class="fancybox fancybox.iframe">
               ${title}
             </a>
           </h3>
-          <p class="subtitle">By <span class="cTitle">${channelTitle}</span>
-          on ${videoDate}</p>
+          <p class="subtitle">View: <span>${viewCount}  </span>．${videoDate}</p>
+          <p class="cTitle">${channelTitle}</p>
           <p>${description}</p>
         </div>
       </li>`;
